@@ -21,24 +21,34 @@
   <body>
     <div id="data">Загрузка...</div>
     <script>
+      let intervalId; // Идентификатор интервала для возможности его остановки
+  
       const fetchData = async () => {
-        try {
-          const response = await fetch(
-            "https://api.battles-miniapp.fanz.ee/battles-miniapp-api/not-useless-users"
-          );
-          const data = await response.json();
-          document.getElementById("data").textContent = data.usersCount; // Теперь используем ключ 'usersCount'
-        } catch (error) {
-          console.error("Ошибка при получении данных:", error);
-          document.getElementById("data").textContent = "Ошибка загрузки";
-        }
+          try {
+              const response = await fetch('https://api.battles-miniapp.fanz.ee/battles-miniapp-api/not-useless-customers');
+              if (!response.ok) {
+                  throw new Error('Сетевая ошибка');
+              }
+              const data = await response.json();
+              if (data.usersCount > 1000000) {
+                  clearInterval(intervalId); // Остановить интервал
+                  document.getElementById('data').textContent = "УРА! Первый миллион!";
+              } else {
+                  document.getElementById('data').textContent = data.usersCount;
+              }
+          } catch (error) {
+              console.error('Ошибка при получении данных:', error);
+              console.log('Приходите позже, запрос недоступен');
+              document.getElementById('data').textContent = 'Ошибка загрузки';
+          }
       };
-
+  
       // Вызов функции при загрузке страницы
       fetchData();
-
-      // Повторный вызов функции каждые 5 минут
-      setInterval(fetchData, 300000);
-    </script>
+  
+      // Повторный вызов функции каждый час
+      intervalId = setInterval(fetchData, 60 * 60 * 1000); // 3600000 мс, что соответствует одному часу
+  </script>
+  
   </body>
 </html>
