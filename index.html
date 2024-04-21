@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Data Display</title>
@@ -10,45 +10,42 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column; /* Добавлено для вертикального стекирования */
         height: 100vh;
         margin: 0;
-        font-size: 48px;
+        font-size: 96px;
         color: rgb(148, 42, 212);
         font-family: Arial, sans-serif;
       }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+    <div id="countLabel">Количество юзеров:</div>
     <div id="data">Загрузка...</div>
     <script>
-      let intervalId; // Идентификатор интервала для возможности его остановки
-  
+      let intervalId;
+
       const fetchData = async () => {
-          try {
-              const response = await fetch('https://api.battles-miniapp.fanz.ee/battles-miniapp-api/info/not-useless-users');
-              if (!response.ok) {
-                  throw new Error('Сетевая ошибка');
-              }
-              const data = await response.json();
-              if (data.usersCount > 1000000) {
-                  clearInterval(intervalId); // Остановить интервал
-                  document.getElementById('data').textContent = "УРА! Первый миллион!";
-              } else {
-                  document.getElementById('data').textContent = data.usersCount;
-              }
-          } catch (error) {
-              console.error('Ошибка при получении данных:', error);
-              console.log('Приходите позже, запрос недоступен');
-              document.getElementById('data').textContent = 'Ошибка загрузки';
-          }
+        try {
+            const response = await fetch('https://api.battles-miniapp.fanz.ee/battles-miniapp-api/info/not-useless-users');
+            if (!response.ok) {
+                throw new Error('Сетевая ошибка');
+            }
+            const data = await response.json();
+            if (data.usersCount > 1000000) {
+                clearInterval(intervalId);
+                document.getElementById('data').textContent = "УРА! Первый миллион!";
+            } else {
+                document.getElementById('data').textContent = data.usersCount;
+            }
+        } catch (error) {
+            console.error('Ошибка при получении данных:', error);
+            document.getElementById('data').textContent = 'Ошибка загрузки';
+        }
       };
-  
-      // Вызов функции при загрузке страницы
+
       fetchData();
-  
-      // Повторный вызов функции каждый час
-      intervalId = setInterval(fetchData, 60 * 60 * 1000); // 3600000 мс, что соответствует одному часу
-  </script>
-  
-  </body>
+      intervalId = setInterval(fetchData, 60 * 60 * 1000);
+    </script>
+</body>
 </html>
